@@ -46,6 +46,11 @@ void                    common_sampler_accept(struct common_sampler * gsmpl, lla
 void                    common_sampler_reset (struct common_sampler * gsmpl);
 struct common_sampler * common_sampler_clone (struct common_sampler * gsmpl);
 
+// Advance the reasoning budget state machine over already-tokenized prompt tokens.
+// Call after common_sampler_init when the prompt contains prior thinking blocks,
+// so the sampler starts counting from the correct position in the new generation.
+void common_sampler_advance_rbudget(struct common_sampler * gsmpl, const std::vector<llama_token> & prompt_tokens);
+
 // arguments can be nullptr to skip printing
 void common_perf_print(const struct llama_context * ctx, const struct common_sampler * gsmpl);
 

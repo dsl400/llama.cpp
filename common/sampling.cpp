@@ -404,6 +404,16 @@ struct common_sampler * common_sampler_init(const struct llama_model * model, st
     return result;
 }
 
+void common_sampler_advance_rbudget(struct common_sampler * gsmpl, const std::vector<llama_token> & prompt_tokens) {
+    if (!gsmpl || !gsmpl->rbudget || prompt_tokens.empty()) {
+        return;
+    }
+    llama_sampler_reset(gsmpl->rbudget);
+    for (const auto token : prompt_tokens) {
+        llama_sampler_accept(gsmpl->rbudget, token);
+    }
+}
+
 void common_sampler_free(struct common_sampler * gsmpl) {
     if (!gsmpl) {
         return;
