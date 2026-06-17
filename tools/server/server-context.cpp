@@ -1615,7 +1615,10 @@ private:
                 slot.smpl.reset(common_sampler_init(model_tgt, task.params.sampling));
                 // Advance reasoning budget state machine over the full prompt so it
                 // correctly skips prior thinking blocks from conversation history.
-                common_sampler_advance_rbudget(slot.smpl.get(), task.tokens.get_tokens());
+                // get_tokens() asserts on multimodal prompts; rbudget is text-only.
+                if (!task.tokens.has_mtmd) {
+                    common_sampler_advance_rbudget(slot.smpl.get(), task.tokens.get_tokens());
+                }
             } catch (std::exception & e) {
                 std::string err_msg = std::string("Failed to initialize samplers: ") + e.what();
                 send_error(task, err_msg, ERROR_TYPE_INVALID_REQUEST);
